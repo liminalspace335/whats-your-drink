@@ -1,0 +1,138 @@
+.screen {
+  min-height: 100dvh;
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.2rem;
+  text-align: center;
+}
+
+.badgeWrap {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badgeGlow {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 72%);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+.badge {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--ls-silver-gradient);
+  box-shadow: var(--ls-shadow-lift), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 3.2s linear infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.4rem;
+  color: var(--ls-text-primary);
+  margin: 0;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 18rem;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--ls-text-tertiary);
+  transition: color 0.3s ease;
+}
+
+.step.active {
+  color: var(--ls-text-primary);
+}
+
+.step.done {
+  color: var(--ls-text-secondary);
+}
+
+.stepMark {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--ls-border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.step.active .stepMark {
+  border-color: var(--ls-text-primary);
+}
+
+.step.done .stepMark {
+  background: var(--ls-silver-gradient);
+  border-color: transparent;
+}
+
+.progressTrack {
+  width: 100%;
+  max-width: 18rem;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ls-border);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  background: var(--ls-silver-gradient);
+  transition: width 5s linear;
+}

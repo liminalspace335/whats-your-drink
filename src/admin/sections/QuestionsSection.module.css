@@ -1,0 +1,170 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.qCard {
+  padding: 0.95rem 1rem;
+}
+
+.qHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  gap: 0.6rem;
+}
+
+.qHeadLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.grip {
+  font-family: var(--font-mono);
+  color: var(--ls-text-tertiary);
+  cursor: grab;
+  user-select: none;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.qText {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ls-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qToggle {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ls-text-tertiary);
+  flex-shrink: 0;
+}
+
+.qBody {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ls-border);
+}
+
+/* Mobile: each option stacks as a small card */
+.optionRowHead {
+  display: none;
+}
+
+.optionRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--ls-border);
+  border-radius: 10px;
+  background: var(--ls-bg);
+}
+
+.optionTopLine {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.optionTopLine .admin-input {
+  flex: 1;
+}
+
+.optionBottomLine {
+  display: grid;
+  grid-template-columns: 1fr 68px 32px;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.deleteBtn {
+  all: unset;
+  cursor: pointer;
+  color: var(--ls-text-tertiary);
+  font-size: 1rem;
+  padding: 0.3rem;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.deleteBtn:hover {
+  color: #9a4a42;
+}
+
+.footerRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.footerRow .admin-btn {
+  width: 100%;
+}
+
+/* Desktop: option rows become a single-line grid */
+@media (min-width: 860px) {
+  .qCard {
+    padding: 1.1rem 1.3rem;
+  }
+
+  .qHeadLeft {
+    gap: 0.7rem;
+  }
+
+  .qText {
+    font-size: 0.9rem;
+  }
+
+  .qBody {
+    margin-top: 1.1rem;
+    padding-top: 1.1rem;
+  }
+
+  .optionRowHead {
+    display: grid;
+    grid-template-columns: 28px 1fr 140px 64px 28px;
+    gap: 0.6rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .optionRow {
+    display: grid;
+    grid-template-columns: 28px 1fr 140px 64px 28px;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    margin-bottom: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .optionTopLine,
+  .optionBottomLine {
+    display: contents;
+  }
+
+  .footerRow {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .footerRow .admin-btn {
+    width: auto;
+  }
+}

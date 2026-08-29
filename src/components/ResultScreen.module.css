@@ -1,0 +1,106 @@
+.screen {
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 2.2rem 1.5rem 3.5rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.7rem;
+  padding-bottom: 1.7rem;
+}
+
+.resultName {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(2.8rem, 14vw, 4.1rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  margin: 0.2rem 0 0.4rem;
+  background: linear-gradient(115deg, #232427 10%, #6a6c70 45%, #232427 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.iconWrap {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--ls-silver-gradient);
+  box-shadow: var(--ls-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.3rem 0 0.1rem;
+  animation: rise 0.5s ease 0.1s both;
+}
+
+.icon {
+  color: #3c3d40;
+}
+
+.personalityTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ls-text-secondary);
+  margin: 0;
+}
+
+.section {
+  padding: 1.4rem 0;
+  border-top: 1px solid var(--ls-border);
+  animation: rise 0.4s ease both;
+}
+
+.sectionLabel {
+  margin-bottom: 0.7rem;
+  display: block;
+}
+
+.sectionBody {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--ls-text-primary);
+  margin: 0;
+}
+
+.notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  letter-spacing: 0.03em;
+  color: var(--ls-text-primary);
+}
+
+.noteSep {
+  margin: 0 0.6rem;
+  color: var(--ls-text-tertiary);
+}
+
+.ctaBlock {
+  padding-top: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

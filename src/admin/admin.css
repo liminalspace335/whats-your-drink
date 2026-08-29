@@ -1,0 +1,216 @@
+.admin-root {
+  min-height: 100dvh;
+  background: var(--ls-bg);
+  color: var(--ls-text-primary);
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 860px) {
+  .admin-root {
+    flex-direction: row;
+  }
+}
+
+.admin-card {
+  background: var(--ls-surface);
+  border: 1px solid var(--ls-border);
+  border-radius: 14px;
+  box-shadow: var(--ls-shadow-sm);
+  padding: 1.1rem 1.15rem;
+}
+
+.admin-section-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.28rem;
+  margin: 0 0 0.3rem;
+  color: var(--ls-text-primary);
+}
+
+.admin-section-desc {
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  color: var(--ls-text-secondary);
+  margin: 0 0 1.3rem;
+  line-height: 1.55;
+}
+
+@media (min-width: 860px) {
+  .admin-card {
+    padding: 1.4rem 1.5rem;
+  }
+
+  .admin-section-title {
+    font-size: 1.5rem;
+  }
+
+  .admin-section-desc {
+    font-size: 0.86rem;
+    margin-bottom: 1.6rem;
+  }
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.admin-field:last-child {
+  margin-bottom: 0;
+}
+
+.admin-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ls-text-tertiary);
+}
+
+.admin-input,
+.admin-textarea,
+.admin-select {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ls-text-primary);
+  background: var(--ls-bg);
+  border: 1px solid var(--ls-border-strong);
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+  min-height: 44px;
+}
+
+@media (min-width: 860px) {
+  .admin-input,
+  .admin-textarea,
+  .admin-select {
+    font-size: 0.9rem;
+    padding: 0.55rem 0.7rem;
+    min-height: unset;
+  }
+}
+
+.admin-input:focus,
+.admin-textarea:focus,
+.admin-select:focus {
+  border-color: var(--ls-text-secondary);
+  box-shadow: 0 0 0 3px rgba(26, 27, 30, 0.06);
+}
+
+.admin-textarea {
+  resize: vertical;
+  min-height: 4.2rem;
+  line-height: 1.5;
+  font-family: var(--font-body);
+}
+
+.admin-badge-code {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--ls-text-tertiary);
+  background: var(--ls-bg-alt);
+  border-radius: 5px;
+  padding: 0.15rem 0.45rem;
+}
+
+.admin-btn {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.65rem 1.05rem;
+  border: 1px solid var(--ls-border-strong);
+  background: var(--ls-surface);
+  color: var(--ls-text-primary);
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+  min-height: 44px;
+}
+
+@media (min-width: 860px) {
+  .admin-btn {
+    font-size: 0.84rem;
+    padding: 0.55rem 1rem;
+    min-height: unset;
+  }
+}
+
+.admin-btn:hover {
+  box-shadow: var(--ls-shadow-sm);
+}
+
+.admin-btn:active {
+  transform: scale(0.98);
+}
+
+.admin-btn-primary {
+  background: var(--ls-silver-gradient);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.admin-btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ls-text-secondary);
+}
+
+.admin-btn-danger {
+  background: transparent;
+  border-color: var(--ls-border-strong);
+  color: #9a4a42;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.admin-table th {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ls-text-tertiary);
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--ls-border-strong);
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid var(--ls-border);
+  vertical-align: middle;
+}
+
+.admin-toast {
+  position: fixed;
+  bottom: calc(4.6rem + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ls-text-primary);
+  color: var(--ls-surface);
+  padding: 0.7rem 1.1rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  box-shadow: var(--ls-shadow-lift);
+  z-index: 80;
+  max-width: calc(100vw - 2rem);
+  text-align: center;
+}
+
+@media (min-width: 860px) {
+  .admin-toast {
+    bottom: 1.4rem;
+  }
+}

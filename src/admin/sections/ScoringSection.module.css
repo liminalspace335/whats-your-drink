@@ -1,0 +1,140 @@
+.matrixWrap {
+  overflow-x: auto;
+  padding: 0.2rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chip {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  padding: 0.28rem 1.5rem 0.28rem 0.6rem;
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  white-space: nowrap;
+  cursor: pointer;
+  min-height: 30px;
+  background-image: linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.85) 50%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.85) 50%, transparent 50%);
+  background-position: calc(100% - 12px) center, calc(100% - 8px) center;
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+  transition: filter 0.15s ease;
+}
+
+.chip:hover {
+  filter: brightness(1.08);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--ls-text-primary);
+  outline-offset: 2px;
+}
+
+.weightNote {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ls-text-tertiary);
+  margin-top: 0.25rem;
+}
+
+.simCard {
+  margin-top: 1.6rem;
+}
+
+.simGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+
+@media (min-width: 860px) {
+  .simGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem 1.2rem;
+  }
+}
+
+.simRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.simActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: stretch;
+  margin-bottom: 1.2rem;
+}
+
+.simActions .admin-btn {
+  width: 100%;
+}
+
+@media (min-width: 860px) {
+  .simActions {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .simActions .admin-btn {
+    width: auto;
+  }
+}
+
+.resultBox {
+  border-top: 1px solid var(--ls-border);
+  padding-top: 1.2rem;
+}
+
+.scoreBars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.scoreRow {
+  display: grid;
+  grid-template-columns: 110px 1fr 32px;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+}
+
+.barTrack {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--ls-bg-alt);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.winnerLine {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.presetNote {
+  font-size: 0.76rem;
+  color: var(--ls-text-tertiary);
+}

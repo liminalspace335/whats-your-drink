@@ -1,0 +1,33 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex: 1;
+}
+
+.track {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+}
+
+.tick {
+  flex: 1;
+  height: 4px;
+  border-radius: 3px;
+  background: var(--ls-border-strong);
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+
+.tick.filled {
+  background: var(--ls-silver-gradient);
+  box-shadow: var(--ls-shadow-sm);
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ls-text-secondary);
+  white-space: nowrap;
+}
