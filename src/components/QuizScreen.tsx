@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import type { QuizQuestion, QuizOption } from "../types";
-import { uiKo } from "../data/ui.ko";
+import type { Ui } from "../data/ui.ko";
 import { ProgressGlass } from "./ProgressGlass";
 import { BeakerBadge } from "./BeakerBadge";
 import styles from "./QuizScreen.module.css";
 
 interface Props {
+  ui: Ui;
   question: QuizQuestion;
   stepIndex: number;
   total: number;
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function QuizScreen({
+  ui,
   question,
   stepIndex,
   total,
@@ -114,7 +116,7 @@ export function QuizScreen({
             }
           }}
         >
-          {uiKo.next}
+          {ui.next}
         </button>
       </div>
     </div>

@@ -1,11 +1,12 @@
-import { uiKo } from "../data/ui.ko";
+import type { Ui } from "../data/ui.ko";
 import styles from "./Cover.module.css";
 
 interface Props {
+  ui: Ui;
   onSelectLanguage: (code: string) => void;
 }
 
-export function Cover({ onSelectLanguage }: Props) {
+export function Cover({ ui, onSelectLanguage }: Props) {
   return (
     <div className={styles.screen}>
       <div className={styles.top}>
@@ -13,13 +14,13 @@ export function Cover({ onSelectLanguage }: Props) {
       </div>
 
       <div className={styles.hero}>
-        <p className={styles.brand}>{uiKo.brand}</p>
-        <h1 className={styles.title}>{uiKo.title}</h1>
-        <p className={styles.subtitle}>{uiKo.subtitle}</p>
+        <p className={styles.brand}>{ui.brand}</p>
+        <h1 className={styles.title}>{ui.title}</h1>
+        <p className={styles.subtitle}>{ui.subtitle}</p>
       </div>
 
       <nav className={styles.langs} aria-label="언어 선택">
-        {uiKo.languages.map((lang) => (
+        {ui.languages.map((lang) => (
           <button
             key={lang.code}
             type="button"

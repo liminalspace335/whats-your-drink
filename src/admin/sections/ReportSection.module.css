@@ -1,0 +1,57 @@
+.summaryRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.4rem;
+}
+
+.statCard {
+  padding: 1rem 1.1rem;
+}
+
+.statLabel {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ls-text-tertiary);
+  margin-bottom: 0.4rem;
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--ls-text-primary);
+}
+
+.tableWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pill {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.pillYes {
+  background: #2f6b45;
+  color: #eafaf0;
+}
+
+.pillNo {
+  background: var(--ls-bg-alt);
+  color: var(--ls-text-tertiary);
+}
+
+.emptyState {
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--ls-text-tertiary);
+  font-size: 0.86rem;
+}

@@ -1,19 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./admin.css";
 import styles from "./AdminApp.module.css";
-import { buildInitialQuestions, buildInitialResultTypes, buildInitialBranding } from "./adminData";
+import { fetchAdminQuestions, fetchResultTypes, fetchBranding, updateQuestionText, updateOption, updateResultType, updateBranding } from "../lib/db";
+import type { AdminQuestion, AdminResultType, AdminBranding } from "./adminTypes";
 import { QuestionsSection } from "./sections/QuestionsSection";
 import { ResultsSection } from "./sections/ResultsSection";
 import { ScoringSection } from "./sections/ScoringSection";
 import { BrandingSection } from "./sections/BrandingSection";
+import { ReportSection } from "./sections/ReportSection";
 
-type Section = "questions" | "results" | "scoring" | "branding";
+type Section = "questions" | "results" | "scoring" | "branding" | "report";
 
 const NAV: { id: Section; label: string; icon: string }[] = [
   { id: "questions", label: "질문 관리", icon: "Q" },
   { id: "results", label: "결과 타입", icon: "R" },
   { id: "scoring", label: "스코어링", icon: "S" },
   { id: "branding", label: "브랜딩·CTA", icon: "B" },
+  { id: "report", label: "보고서", icon: "D" },
 ];
 
 const SECTION_LABEL: Record<Section, string> = {
@@ -21,6 +24,7 @@ const SECTION_LABEL: Record<Section, string> = {
   results: "RESULT TYPES",
   scoring: "SCORING",
   branding: "BRANDING",
+  report: "REPORT",
 };
 
 function BrandBadge() {
@@ -34,14 +38,82 @@ function BrandBadge() {
 
 export default function AdminApp() {
   const [section, setSection] = useState<Section>("questions");
-  const [questions, setQuestions] = useState(buildInitialQuestions);
-  const [resultTypes, setResultTypes] = useState(buildInitialResultTypes);
-  const [branding, setBranding] = useState(buildInitialBranding);
+  const [questions, setQuestions] = useState<AdminQuestion[]>([]);
+  const [resultTypes, setResultTypes] = useState<AdminResultType[]>([]);
+  const [branding, setBranding] = useState<AdminBranding | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    Promise.all([fetchAdminQuestions(), fetchResultTypes(), fetchBranding()])
+      .then(([qs, rts, b]) => {
+        setQuestions(qs);
+        setResultTypes(rts);
+        setBranding(b);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        showToast("데이터를 불러오지 못했습니다");
+        setLoading(false);
+      });
+  }, []);
 
   const showToast = (msg: string) => {
     setToast(msg);
-    setTimeout(() => setToast(null), 2200);
+    setTimeout(() => setToast(null), 2400);
+  };
+
+  const handleSave = async () => {
+    if (!branding) return;
+    setSaving(true);
+    try {
+      const jobs: Promise<unknown>[] = [];
+
+      for (const q of questions) {
+        jobs.push(updateQuestionText(q.id, q.text));
+        for (const o of q.options) {
+          jobs.push(updateOption(o.id, { label: o.label, result_type: o.resultType, weight: o.weight }));
+        }
+      }
+
+      for (const r of resultTypes) {
+        jobs.push(
+          updateResultType(r.type, {
+            tie_break_priority: r.tieBreakPriority,
+            personality_title: r.personalityTitle,
+            about_you: r.aboutYou,
+            notes: r.notes,
+            scent_description: r.scentDescription,
+            why_it_fits: r.whyItFits,
+            recommended_for: r.recommendedFor,
+          }),
+        );
+      }
+
+      jobs.push(
+        updateBranding({
+          cover_brand: branding.coverBrand,
+          cover_title: branding.coverTitle,
+          cover_subtitle: branding.coverSubtitle,
+          next_button: branding.nextButton,
+          share_button: branding.shareButton,
+          scent_button: branding.scentButton,
+          scent_caption: branding.scentCaption,
+          share_template: branding.shareTemplate,
+          qr_url: branding.qrUrl,
+        }),
+      );
+
+      await Promise.all(jobs);
+      showToast("Supabase에 저장되었습니다");
+    } catch (err) {
+      console.error(err);
+      showToast("저장 중 오류가 발생했습니다");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const testInfo = (
@@ -61,6 +133,16 @@ export default function AdminApp() {
       </div>
     </>
   );
+
+  if (loading || !branding) {
+    return (
+      <div className="admin-root">
+        <main className={styles.main} style={{ padding: "2rem" }}>
+          불러오는 중...
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-root">
@@ -96,9 +178,7 @@ export default function AdminApp() {
 
       {/* Desktop: sidebar */}
       <aside className={styles.sidebar}>
-        <div>
-          {testInfo}
-        </div>
+        <div>{testInfo}</div>
 
         <nav className={styles.nav}>
           {NAV.map((item) => (
@@ -115,15 +195,14 @@ export default function AdminApp() {
         </nav>
 
         <p className={styles.footerNote}>
-          이 화면은 더미 데이터 기반 샘플입니다. 실제 저장·배포는 백엔드 연동 후 동작합니다.
+          이 화면은 실제 Supabase 데이터베이스와 연동되어 있습니다. 저장을 누르면 실 데이터가
+          바뀝니다.
         </p>
       </aside>
 
       <main className={styles.main}>
         <div className={styles.topBar}>
-          <span className={styles.crumbs}>
-            {SECTION_LABEL[section]}
-          </span>
+          <span className={styles.crumbs}>{SECTION_LABEL[section]}</span>
           <div style={{ display: "flex", gap: "0.8rem", alignItems: "center" }}>
             <a href={import.meta.env.BASE_URL} className={styles.previewLink}>
               사용자 화면 →
@@ -131,9 +210,10 @@ export default function AdminApp() {
             <button
               type="button"
               className={`admin-btn admin-btn-primary ${styles.desktopSaveBtn}`}
-              onClick={() => showToast("변경사항이 임시 저장되었습니다 (샘플 — 실제 저장 아님)")}
+              onClick={handleSave}
+              disabled={saving}
             >
-              저장
+              {saving ? "저장 중..." : "저장"}
             </button>
           </div>
         </div>
@@ -151,19 +231,14 @@ export default function AdminApp() {
             onQuestionsChange={setQuestions}
           />
         )}
-        {section === "branding" && (
-          <BrandingSection branding={branding} onChange={setBranding} />
-        )}
+        {section === "branding" && <BrandingSection branding={branding} onChange={setBranding} />}
+        {section === "report" && <ReportSection />}
       </main>
 
       {/* Mobile: sticky bottom save bar */}
       <div className={styles.mobileSaveBar}>
-        <button
-          type="button"
-          className="admin-btn admin-btn-primary"
-          onClick={() => showToast("변경사항이 임시 저장되었습니다 (샘플 — 실제 저장 아님)")}
-        >
-          저장
+        <button type="button" className="admin-btn admin-btn-primary" onClick={handleSave} disabled={saving}>
+          {saving ? "저장 중..." : "저장"}
         </button>
       </div>
 

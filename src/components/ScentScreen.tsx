@@ -1,37 +1,35 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import { uiKo } from "../data/ui.ko";
+import type { Ui } from "../data/ui.ko";
 import styles from "./ScentScreen.module.css";
 
-const LINKTREE_URL =
-  "https://linktr.ee/liminalspace335?utm_source=linktree_profile_share&ltsid=a494376a-1f3e-482a-90f1-48ef88279e9c";
-
 interface Props {
+  ui: Ui;
   onBack: () => void;
 }
 
-export function ScentScreen({ onBack }: Props) {
+export function ScentScreen({ ui, onBack }: Props) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    QRCode.toDataURL(LINKTREE_URL, {
+    QRCode.toDataURL(ui.qrUrl, {
       width: 480,
       margin: 1,
       color: { dark: "#0b0b0c", light: "#ffffff" },
     }).then(setQrDataUrl);
-  }, []);
+  }, [ui.qrUrl]);
 
   return (
     <div className={styles.screen}>
       <button type="button" className={styles.back} onClick={onBack}>
-        ← {uiKo.scentBack}
+        ← {ui.scentBack}
       </button>
 
       <div className={styles.center}>
         <span className={styles.hint}>SCAN TO EXPLORE</span>
 
         <a
-          href={LINKTREE_URL}
+          href={ui.qrUrl}
           target="_blank"
           rel="noreferrer"
           className={styles.qrLink}
@@ -44,7 +42,7 @@ export function ScentScreen({ onBack }: Props) {
           </div>
         </a>
 
-        <p className={styles.caption}>{uiKo.scentCaption}</p>
+        <p className={styles.caption}>{ui.scentCaption}</p>
       </div>
     </div>
   );

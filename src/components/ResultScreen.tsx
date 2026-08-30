@@ -1,20 +1,36 @@
 import { useState } from "react";
 import type { ResultContent } from "../types";
-import { uiKo } from "../data/ui.ko";
+import type { Ui } from "../data/ui.ko";
+import { markSubmissionShared } from "../lib/db";
 import { DrinkIcon } from "./DrinkIcon";
 import styles from "./ResultScreen.module.css";
 
 interface Props {
+  ui: Ui;
   result: ResultContent;
+  submissionId: string | null;
   onScent: () => void;
 }
 
-export function ResultScreen({ result, onScent }: Props) {
+export function ResultScreen({ ui, result, submissionId, onScent }: Props) {
   const [copied, setCopied] = useState(false);
 
+  const buildShareUrl = () => {
+    const url = new URL(import.meta.env.BASE_URL, window.location.origin);
+    if (submissionId) url.searchParams.set("ref", submissionId);
+    return url.toString();
+  };
+
   const handleShare = async () => {
-    const text = uiKo.shareText(result.displayName);
-    const shareData = { title: uiKo.brand, text, url: window.location.href };
+    const text = ui.shareText(result.displayName);
+    const shareUrl = buildShareUrl();
+    const shareData = { title: ui.brand, text, url: shareUrl };
+
+    if (submissionId) {
+      markSubmissionShared(submissionId).catch(() => {
+        // best-effort tracking — sharing itself should not fail on this
+      });
+    }
 
     if (navigator.share) {
       try {
@@ -26,7 +42,7 @@ export function ResultScreen({ result, onScent }: Props) {
     }
 
     try {
-      await navigator.clipboard.writeText(`${text}\n${window.location.href}`);
+      await navigator.clipboard.writeText(`${text}\n${shareUrl}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -37,7 +53,7 @@ export function ResultScreen({ result, onScent }: Props) {
   return (
     <div className={styles.screen}>
       <header className={styles.header}>
-        <span className="eyebrow">{uiKo.personalityTypeLabel}</span>
+        <span className="eyebrow">{ui.personalityTypeLabel}</span>
         <h1 className={styles.resultName}>{result.displayName}</h1>
         <div className={styles.iconWrap}>
           <DrinkIcon type={result.type} size={44} className={styles.icon} />
@@ -46,12 +62,12 @@ export function ResultScreen({ result, onScent }: Props) {
       </header>
 
       <section className={styles.section}>
-        <span className={`eyebrow ${styles.sectionLabel}`}>{uiKo.sectionAboutYou}</span>
+        <span className={`eyebrow ${styles.sectionLabel}`}>{ui.sectionAboutYou}</span>
         <p className={styles.sectionBody}>{result.aboutYou}</p>
       </section>
 
       <section className={styles.section}>
-        <span className={`eyebrow ${styles.sectionLabel}`}>{uiKo.sectionNotes}</span>
+        <span className={`eyebrow ${styles.sectionLabel}`}>{ui.sectionNotes}</span>
         <p className={styles.notes}>
           {result.notes.map((note, i) => (
             <span key={note}>
@@ -63,17 +79,17 @@ export function ResultScreen({ result, onScent }: Props) {
       </section>
 
       <section className={styles.section}>
-        <span className={`eyebrow ${styles.sectionLabel}`}>{uiKo.sectionScent}</span>
+        <span className={`eyebrow ${styles.sectionLabel}`}>{ui.sectionScent}</span>
         <p className={styles.sectionBody}>{result.scentDescription}</p>
       </section>
 
       <section className={styles.section}>
-        <span className={`eyebrow ${styles.sectionLabel}`}>{uiKo.sectionWhy}</span>
+        <span className={`eyebrow ${styles.sectionLabel}`}>{ui.sectionWhy}</span>
         <p className={styles.sectionBody}>{result.whyItFits}</p>
       </section>
 
       <section className={styles.section}>
-        <span className={`eyebrow ${styles.sectionLabel}`}>{uiKo.sectionRecommend}</span>
+        <span className={`eyebrow ${styles.sectionLabel}`}>{ui.sectionRecommend}</span>
         <p className={styles.sectionBody}>{result.recommendedFor}</p>
       </section>
 
@@ -81,10 +97,10 @@ export function ResultScreen({ result, onScent }: Props) {
 
       <div className={styles.ctaBlock}>
         <button type="button" className="btn btn-outline" onClick={handleShare}>
-          {copied ? uiKo.shareCopied : uiKo.shareButton}
+          {copied ? ui.shareCopied : ui.shareButton}
         </button>
         <button type="button" className="btn btn-primary" onClick={onScent}>
-          {uiKo.scentButton}
+          {ui.scentButton}
         </button>
       </div>
     </div>
