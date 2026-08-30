@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./admin.css";
 import styles from "./AdminApp.module.css";
-import { fetchAdminQuestions, fetchResultTypes, fetchBranding, updateQuestionText, updateOption, updateResultType, updateBranding } from "../lib/db";
+import { fetchAdminQuestions, fetchResultTypes, fetchBranding, updateQuestion, updateOption, updateResultType, updateBranding } from "../lib/db";
 import type { AdminQuestion, AdminResultType, AdminBranding } from "./adminTypes";
 import { QuestionsSection } from "./sections/QuestionsSection";
 import { ResultsSection } from "./sections/ResultsSection";
@@ -72,7 +72,7 @@ export default function AdminApp() {
       const jobs: Promise<unknown>[] = [];
 
       for (const q of questions) {
-        jobs.push(updateQuestionText(q.id, q.text));
+        jobs.push(updateQuestion(q.id, { text: q.text, text_align: q.textAlign }));
         for (const o of q.options) {
           jobs.push(updateOption(o.id, { label: o.label, result_type: o.resultType, weight: o.weight }));
         }

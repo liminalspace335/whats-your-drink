@@ -81,7 +81,9 @@ export function QuizScreen({
         <BeakerBadge fillLevel={stepIndex} total={total} />
 
         <motion.div animate={controls} style={{ width: "100%" }}>
-          <h2 className={styles.question}>{question.text}</h2>
+          <h2 className={styles.question} style={{ textAlign: question.textAlign }}>
+            {question.text}
+          </h2>
 
           <div className={styles.options} role="radiogroup" aria-label={question.text}>
             {question.options.map((option, i) => {

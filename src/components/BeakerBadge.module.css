@@ -42,7 +42,7 @@
 }
 
 .dropper {
-  transform-origin: 46px 4px;
+  transform-origin: 55px -16px;
   opacity: 0;
 }
 
@@ -70,7 +70,7 @@
 }
 
 .dropperBulb {
-  transform-origin: 46px 6px;
+  transform-origin: 55px -16px;
   transition: transform 0.15s ease;
 }
 
@@ -118,7 +118,7 @@
   }
   100% {
     opacity: 0;
-    transform: translateY(26px);
+    transform: translateY(34px);
   }
 }
 
@@ -135,7 +135,7 @@
   }
   100% {
     opacity: 0;
-    transform: translateY(26px);
+    transform: translateY(34px);
   }
 }
 

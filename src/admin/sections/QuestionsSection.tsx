@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { AdminQuestion } from "../adminTypes";
 import { RESULT_TYPE_LABELS } from "../adminTypes";
-import type { DrinkType } from "../../types";
+import type { DrinkType, TextAlign } from "../../types";
 import styles from "./QuestionsSection.module.css";
 
 interface Props {
@@ -11,11 +11,17 @@ interface Props {
 
 const RESULT_TYPES: DrinkType[] = ["WINE", "FRUIT_PUNCH", "RUM", "CHAMPAGNE", "MOJITO", "COGNAC"];
 
+const ALIGN_OPTIONS: { value: TextAlign; label: string }[] = [
+  { value: "left", label: "왼쪽" },
+  { value: "center", label: "가운데" },
+  { value: "right", label: "오른쪽" },
+];
+
 export function QuestionsSection({ questions, onChange }: Props) {
   const [openId, setOpenId] = useState<string | null>(questions[0]?.id ?? null);
 
-  const updateQuestion = (id: string, text: string) => {
-    onChange(questions.map((q) => (q.id === id ? { ...q, text } : q)));
+  const updateQuestionField = (id: string, patch: Partial<Pick<AdminQuestion, "text" | "textAlign">>) => {
+    onChange(questions.map((q) => (q.id === id ? { ...q, ...patch } : q)));
   };
 
   const updateOption = (
@@ -68,6 +74,7 @@ export function QuestionsSection({ questions, onChange }: Props) {
       id: `q-new-${Date.now()}`,
       code: `Q${nextIndex}`,
       text: "새 질문을 입력하세요",
+      textAlign: "center",
       options: [],
     };
     onChange([...questions, newQ]);
@@ -110,8 +117,26 @@ export function QuestionsSection({ questions, onChange }: Props) {
                     <textarea
                       className="admin-textarea"
                       value={q.text}
-                      onChange={(e) => updateQuestion(q.id, e.target.value)}
+                      onChange={(e) => updateQuestionField(q.id, { text: e.target.value })}
                     />
+                  </div>
+
+                  <div className="admin-field">
+                    <label className="admin-label">텍스트 정렬</label>
+                    <div className={styles.alignRow}>
+                      {ALIGN_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          className={`${styles.alignBtn} ${
+                            q.textAlign === opt.value ? styles.alignBtnActive : ""
+                          }`}
+                          onClick={() => updateQuestionField(q.id, { textAlign: opt.value })}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="admin-field">

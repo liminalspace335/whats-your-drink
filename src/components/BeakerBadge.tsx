@@ -40,7 +40,7 @@ export function BeakerBadge({ fillLevel, total }: Props) {
   return (
     <div className={styles.wrap} aria-hidden="true">
       <div className={`${styles.badge} ${isDropping ? styles.dropping : ""}`}>
-        <svg width="44" height="44" viewBox="0 0 64 80" className={styles.svg}>
+        <svg width="54" height="54" viewBox="0 0 64 80" className={styles.svg}>
           <defs>
             <clipPath id="beakerClip">
               <path d={BEAKER_CLIP_PATH} />
@@ -81,17 +81,17 @@ export function BeakerBadge({ fillLevel, total }: Props) {
           <line x1="40" y1="44" x2="45" y2="44" stroke="#8a8c90" strokeWidth="1" opacity="0.55" />
           <line x1="40" y1="58" x2="45" y2="58" stroke="#8a8c90" strokeWidth="1" opacity="0.55" />
 
-          {/* dropper / pipette */}
+          {/* dropper / pipette — enlarged and drawn outside the beaker's own bounds so it reads clearly */}
           <g className={styles.dropper}>
+            <line x1="54" y1="-14" x2="46" y2="10" stroke="#7c7e82" strokeWidth="2.4" strokeLinecap="round" />
             <g className={styles.dropperBulb}>
-              <ellipse cx="46" cy="4" rx="4" ry="4.5" fill="none" stroke="#8a8c90" strokeWidth="1.4" />
+              <ellipse cx="55" cy="-16" rx="7" ry="8.5" fill="#eef0f1" stroke="#7c7e82" strokeWidth="2" />
             </g>
-            <line x1="46" y1="8.5" x2="46" y2="16" stroke="#8a8c90" strokeWidth="1.4" strokeLinecap="round" />
           </g>
 
           {/* falling drops */}
-          <circle className={`${styles.drop} ${styles.drop1}`} cx="45" cy="18" r="1.6" fill="#9a9ca0" />
-          <circle className={`${styles.drop} ${styles.drop2}`} cx="47" cy="18" r="1.3" fill="#9a9ca0" />
+          <circle className={`${styles.drop} ${styles.drop1}`} cx="45" cy="12" r="2.4" fill="#8a8c90" />
+          <circle className={`${styles.drop} ${styles.drop2}`} cx="47" cy="12" r="1.9" fill="#9a9ca0" />
 
           {/* ripple on impact */}
           <ellipse

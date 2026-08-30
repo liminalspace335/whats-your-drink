@@ -1,5 +1,7 @@
 export type DrinkType = "WINE" | "FRUIT_PUNCH" | "RUM" | "CHAMPAGNE" | "MOJITO" | "COGNAC";
 
+export type TextAlign = "left" | "center" | "right";
+
 export interface QuizOption {
   id: string;
   label: string;
@@ -9,6 +11,7 @@ export interface QuizOption {
 export interface QuizQuestion {
   id: string;
   text: string;
+  textAlign: TextAlign;
   options: QuizOption[];
 }
 

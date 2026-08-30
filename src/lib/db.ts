@@ -1,17 +1,20 @@
 import { supabase } from "./supabaseClient";
-import type { DrinkType, QuizQuestion } from "../types";
+import type { DrinkType, QuizQuestion, TextAlign } from "../types";
 import type { AdminQuestion, AdminResultType, AdminBranding } from "../admin/adminTypes";
 
 export async function fetchQuizQuestions(): Promise<QuizQuestion[]> {
   const { data, error } = await supabase
     .from("questions")
-    .select("id, text, display_order, question_options(id, label, result_type, display_order)")
+    .select(
+      "id, text, text_align, display_order, question_options(id, label, result_type, display_order)",
+    )
     .order("display_order", { ascending: true });
   if (error) throw error;
 
   return (data ?? []).map((q) => ({
     id: q.id,
     text: q.text,
+    textAlign: q.text_align as TextAlign,
     options: [...q.question_options]
       .sort((a, b) => a.display_order - b.display_order)
       .map((o) => ({ id: o.id, label: o.label, type: o.result_type as DrinkType })),
@@ -22,7 +25,7 @@ export async function fetchAdminQuestions(): Promise<AdminQuestion[]> {
   const { data, error } = await supabase
     .from("questions")
     .select(
-      "id, code, text, display_order, question_options(id, code, label, result_type, weight, display_order)",
+      "id, code, text, text_align, display_order, question_options(id, code, label, result_type, weight, display_order)",
     )
     .order("display_order", { ascending: true });
   if (error) throw error;
@@ -31,6 +34,7 @@ export async function fetchAdminQuestions(): Promise<AdminQuestion[]> {
     id: q.id,
     code: q.code,
     text: q.text,
+    textAlign: q.text_align as TextAlign,
     options: [...q.question_options]
       .sort((a, b) => a.display_order - b.display_order)
       .map((o) => ({
@@ -80,8 +84,11 @@ export async function fetchBranding(): Promise<AdminBranding> {
   };
 }
 
-export async function updateQuestionText(id: string, text: string) {
-  const { error } = await supabase.from("questions").update({ text }).eq("id", id);
+export async function updateQuestion(
+  id: string,
+  patch: Partial<{ text: string; text_align: TextAlign }>,
+) {
+  const { error } = await supabase.from("questions").update(patch).eq("id", id);
   if (error) throw error;
 }
 

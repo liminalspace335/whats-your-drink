@@ -1,4 +1,4 @@
-import type { DrinkType } from "../types";
+import type { DrinkType, TextAlign } from "../types";
 
 export interface AdminOption {
   id: string;
@@ -12,6 +12,7 @@ export interface AdminQuestion {
   id: string;
   code: string;
   text: string;
+  textAlign: TextAlign;
   options: AdminOption[];
 }
 
