@@ -159,13 +159,43 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .surfaceHighlight,
-  .dropping .dropper,
-  .dropping .dropperBulb,
-  .dropping .drop1,
-  .dropping .drop2,
-  .dropping .ripple {
-    animation: none;
-  }
+/*
+ * This badge is a small, contained progress indicator, not full-screen
+ * motion — it's exempt from the site-wide prefers-reduced-motion rule
+ * (see index.css) so the fill/dropper animation still plays on devices
+ * where the OS reports a reduced-motion preference (common on mobile
+ * battery-saver / low-power modes). The durations below just restate the
+ * values already set above; !important is required to out-rank the
+ * global `* { transition-duration: 0.001ms !important }` rule.
+ */
+.liquid {
+  transition-duration: 0.65s !important;
+}
+
+.surfaceGroup {
+  transition-duration: 0.65s !important;
+}
+
+.surfaceHighlight {
+  animation-duration: 2.6s !important;
+}
+
+.dropping .dropper {
+  animation-duration: 0.85s !important;
+}
+
+.dropping .dropperBulb {
+  animation-duration: 0.5s !important;
+}
+
+.dropping .drop1 {
+  animation-duration: 0.6s !important;
+}
+
+.dropping .drop2 {
+  animation-duration: 0.6s !important;
+}
+
+.dropping .ripple {
+  animation-duration: 0.5s !important;
 }
