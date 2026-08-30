@@ -49,34 +49,6 @@
   align-items: center;
 }
 
-.badgeWrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.1rem;
-}
-
-.badgeGlow {
-  position: absolute;
-  inset: -14px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
-  filter: blur(2px);
-}
-
-.badge {
-  position: relative;
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  background: var(--ls-silver-gradient);
-  box-shadow: var(--ls-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .question {
   font-family: var(--font-display);
   font-weight: 700;

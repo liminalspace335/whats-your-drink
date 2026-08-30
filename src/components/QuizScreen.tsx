@@ -3,6 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import type { QuizQuestion, QuizOption } from "../types";
 import { uiKo } from "../data/ui.ko";
 import { ProgressGlass } from "./ProgressGlass";
+import { BeakerBadge } from "./BeakerBadge";
 import styles from "./QuizScreen.module.css";
 
 interface Props {
@@ -75,15 +76,7 @@ export function QuizScreen({
       </div>
 
       <div className={styles.body}>
-        <div className={styles.badgeWrap} aria-hidden="true">
-          <div className={styles.badgeGlow} />
-          <div className={styles.badge}>
-            <svg width="22" height="22" viewBox="0 0 26 26" fill="none">
-              <circle cx="13" cy="13" r="9" stroke="#8a8c90" strokeWidth="1.3" />
-              <circle cx="13" cy="13" r="2.4" fill="#8a8c90" />
-            </svg>
-          </div>
-        </div>
+        <BeakerBadge fillLevel={stepIndex} total={total} />
 
         <motion.div animate={controls} style={{ width: "100%" }}>
           <h2 className={styles.question}>{question.text}</h2>
