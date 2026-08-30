@@ -4,13 +4,14 @@ import styles from "./Cover.module.css";
 interface Props {
   ui: Ui;
   onSelectLanguage: (code: string) => void;
+  disabled?: boolean;
 }
 
-export function Cover({ ui, onSelectLanguage }: Props) {
+export function Cover({ ui, onSelectLanguage, disabled }: Props) {
   return (
     <div className={styles.screen}>
       <div className={styles.top}>
-        <span className={styles.mark}>PERFUME PERSONALITY TEST</span>
+        <span className={styles.mark}>{ui.coverEyebrow}</span>
       </div>
 
       <div className={styles.hero}>
@@ -26,6 +27,7 @@ export function Cover({ ui, onSelectLanguage }: Props) {
             type="button"
             className={styles.langBtn}
             onClick={() => onSelectLanguage(lang.code)}
+            disabled={disabled}
           >
             <span className={styles.langLabel}>{lang.label}</span>
             <span className={styles.arrow}>→</span>

@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 import "./admin.css";
 import styles from "./AdminApp.module.css";
-import { fetchAdminQuestions, fetchResultTypes, fetchBranding, updateQuestion, updateOption, updateResultType, updateBranding } from "../lib/db";
+import {
+  fetchAdminQuestions,
+  fetchResultTypes,
+  fetchBranding,
+  updateQuestion,
+  updateOption,
+  updateResultType,
+  updateBranding,
+  upsertTranslation,
+  type Locale,
+} from "../lib/db";
 import type { AdminQuestion, AdminResultType, AdminBranding } from "./adminTypes";
 import { QuestionsSection } from "./sections/QuestionsSection";
 import { ResultsSection } from "./sections/ResultsSection";
@@ -17,6 +27,12 @@ const NAV: { id: Section; label: string; icon: string }[] = [
   { id: "scoring", label: "스코어링", icon: "S" },
   { id: "branding", label: "브랜딩·CTA", icon: "B" },
   { id: "report", label: "보고서", icon: "D" },
+];
+
+const LOCALES: { code: Locale; label: string }[] = [
+  { code: "ko", label: "한국어" },
+  { code: "en", label: "English" },
+  { code: "vi", label: "Tiếng Việt" },
 ];
 
 const SECTION_LABEL: Record<Section, string> = {
@@ -38,6 +54,7 @@ function BrandBadge() {
 
 export default function AdminApp() {
   const [section, setSection] = useState<Section>("questions");
+  const [locale, setLocale] = useState<Locale>("ko");
   const [questions, setQuestions] = useState<AdminQuestion[]>([]);
   const [resultTypes, setResultTypes] = useState<AdminResultType[]>([]);
   const [branding, setBranding] = useState<AdminBranding | null>(null);
@@ -46,7 +63,8 @@ export default function AdminApp() {
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([fetchAdminQuestions(), fetchResultTypes(), fetchBranding()])
+    setLoading(true);
+    Promise.all([fetchAdminQuestions(locale), fetchResultTypes(locale), fetchBranding(locale)])
       .then(([qs, rts, b]) => {
         setQuestions(qs);
         setResultTypes(rts);
@@ -58,7 +76,8 @@ export default function AdminApp() {
         showToast("데이터를 불러오지 못했습니다");
         setLoading(false);
       });
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -71,40 +90,71 @@ export default function AdminApp() {
     try {
       const jobs: Promise<unknown>[] = [];
 
-      for (const q of questions) {
-        jobs.push(updateQuestion(q.id, { text: q.text, text_align: q.textAlign }));
-        for (const o of q.options) {
-          jobs.push(updateOption(o.id, { label: o.label, result_type: o.resultType, weight: o.weight }));
+      if (locale === "ko") {
+        for (const q of questions) {
+          jobs.push(updateQuestion(q.id, { text: q.text, text_align: q.textAlign }));
+          for (const o of q.options) {
+            jobs.push(
+              updateOption(o.id, { label: o.label, result_type: o.resultType, weight: o.weight }),
+            );
+          }
         }
-      }
 
-      for (const r of resultTypes) {
+        for (const r of resultTypes) {
+          jobs.push(
+            updateResultType(r.type, {
+              tie_break_priority: r.tieBreakPriority,
+              personality_title: r.personalityTitle,
+              about_you: r.aboutYou,
+              notes: r.notes,
+              scent_description: r.scentDescription,
+              why_it_fits: r.whyItFits,
+              recommended_for: r.recommendedFor,
+            }),
+          );
+        }
+
         jobs.push(
-          updateResultType(r.type, {
-            tie_break_priority: r.tieBreakPriority,
-            personality_title: r.personalityTitle,
-            about_you: r.aboutYou,
-            notes: r.notes,
-            scent_description: r.scentDescription,
-            why_it_fits: r.whyItFits,
-            recommended_for: r.recommendedFor,
+          updateBranding({
+            cover_brand: branding.coverBrand,
+            cover_title: branding.coverTitle,
+            cover_subtitle: branding.coverSubtitle,
+            next_button: branding.nextButton,
+            share_button: branding.shareButton,
+            scent_button: branding.scentButton,
+            scent_caption: branding.scentCaption,
+            share_template: branding.shareTemplate,
+            qr_url: branding.qrUrl,
           }),
         );
-      }
+      } else {
+        for (const q of questions) {
+          jobs.push(upsertTranslation("question", q.id, locale, "text", q.text));
+          for (const o of q.options) {
+            jobs.push(upsertTranslation("option", o.id, locale, "label", o.label));
+          }
+        }
 
-      jobs.push(
-        updateBranding({
-          cover_brand: branding.coverBrand,
-          cover_title: branding.coverTitle,
-          cover_subtitle: branding.coverSubtitle,
-          next_button: branding.nextButton,
-          share_button: branding.shareButton,
-          scent_button: branding.scentButton,
-          scent_caption: branding.scentCaption,
-          share_template: branding.shareTemplate,
-          qr_url: branding.qrUrl,
-        }),
-      );
+        for (const r of resultTypes) {
+          jobs.push(
+            upsertTranslation("result_type", r.type, locale, "personality_title", r.personalityTitle),
+            upsertTranslation("result_type", r.type, locale, "about_you", r.aboutYou),
+            upsertTranslation("result_type", r.type, locale, "notes", r.notes.join(", ")),
+            upsertTranslation("result_type", r.type, locale, "scent_description", r.scentDescription),
+            upsertTranslation("result_type", r.type, locale, "why_it_fits", r.whyItFits),
+            upsertTranslation("result_type", r.type, locale, "recommended_for", r.recommendedFor),
+          );
+        }
+
+        jobs.push(
+          upsertTranslation("branding", "1", locale, "cover_subtitle", branding.coverSubtitle),
+          upsertTranslation("branding", "1", locale, "next_button", branding.nextButton),
+          upsertTranslation("branding", "1", locale, "share_button", branding.shareButton),
+          upsertTranslation("branding", "1", locale, "scent_button", branding.scentButton),
+          upsertTranslation("branding", "1", locale, "scent_caption", branding.scentCaption),
+          upsertTranslation("branding", "1", locale, "share_template", branding.shareTemplate),
+        );
+      }
 
       await Promise.all(jobs);
       showToast("Supabase에 저장되었습니다");
@@ -129,9 +179,23 @@ export default function AdminApp() {
       </div>
       <div className={styles.testMeta}>
         <span className={`${styles.statusPill} ${styles.published}`}>PUBLISHED</span>
-        <span className={styles.langsRow}>ko · en · vi</span>
       </div>
     </>
+  );
+
+  const localeSwitcher = (
+    <div className={styles.localeRow}>
+      {LOCALES.map((l) => (
+        <button
+          key={l.code}
+          type="button"
+          className={`${styles.localeBtn} ${locale === l.code ? styles.localeBtnActive : ""}`}
+          onClick={() => setLocale(l.code)}
+        >
+          {l.label}
+        </button>
+      ))}
+    </div>
   );
 
   if (loading || !branding) {
@@ -159,6 +223,7 @@ export default function AdminApp() {
         <div className={styles.testMeta}>
           <span className={`${styles.statusPill} ${styles.published}`}>PUBLISHED</span>
         </div>
+        {localeSwitcher}
       </div>
 
       {/* Mobile: horizontal scroll section tabs */}
@@ -179,6 +244,7 @@ export default function AdminApp() {
       {/* Desktop: sidebar */}
       <aside className={styles.sidebar}>
         <div>{testInfo}</div>
+        {localeSwitcher}
 
         <nav className={styles.nav}>
           {NAV.map((item) => (
@@ -219,19 +285,26 @@ export default function AdminApp() {
         </div>
 
         {section === "questions" && (
-          <QuestionsSection questions={questions} onChange={setQuestions} />
+          <QuestionsSection questions={questions} onChange={setQuestions} locale={locale} />
         )}
         {section === "results" && (
-          <ResultsSection resultTypes={resultTypes} onChange={setResultTypes} />
+          <ResultsSection resultTypes={resultTypes} onChange={setResultTypes} locale={locale} />
         )}
-        {section === "scoring" && (
+        {section === "scoring" && locale === "ko" && (
           <ScoringSection
             questions={questions}
             resultTypes={resultTypes}
             onQuestionsChange={setQuestions}
           />
         )}
-        {section === "branding" && <BrandingSection branding={branding} onChange={setBranding} />}
+        {section === "scoring" && locale !== "ko" && (
+          <p className="admin-section-desc">
+            스코어링은 한국어(원본) 구조를 기준으로만 관리합니다. 상단에서 한국어를 선택해주세요.
+          </p>
+        )}
+        {section === "branding" && (
+          <BrandingSection branding={branding} onChange={setBranding} locale={locale} />
+        )}
         {section === "report" && <ReportSection />}
       </main>
 

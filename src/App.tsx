@@ -9,6 +9,7 @@ import {
   fetchBranding,
   insertSubmission,
   insertReferralVisit,
+  type Locale,
 } from "./lib/db";
 import { Cover } from "./components/Cover";
 import { QuizScreen } from "./components/QuizScreen";
@@ -43,7 +44,9 @@ export default function App() {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [resultsData, setResultsData] = useState<Record<DrinkType, ResultContent> | null>(null);
   const [ui, setUi] = useState<Ui | null>(null);
+  const [locale, setLocale] = useState<Locale>("ko");
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [switchingLanguage, setSwitchingLanguage] = useState(false);
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<(QuizOption | null)[]>([]);
@@ -53,12 +56,12 @@ export default function App() {
   const referralLogged = useRef(false);
 
   useEffect(() => {
-    Promise.all([fetchQuizQuestions(), fetchResultTypes(), fetchBranding()])
+    Promise.all([fetchQuizQuestions("ko"), fetchResultTypes("ko"), fetchBranding("ko")])
       .then(([qs, resultTypes, branding]) => {
         setQuestions(qs);
         setAnswers(Array(qs.length).fill(null));
         setResultsData(buildResultsMap(resultTypes));
-        setUi(buildUi(branding));
+        setUi(buildUi(branding, "ko"));
         setScreen("cover");
       })
       .catch((err) => {
@@ -77,13 +80,33 @@ export default function App() {
     }
   }, []);
 
-  const handleSelectLanguage = (code: string) => {
-    if (code !== "ko") {
-      setNotice("이 언어는 샘플에서 준비 중입니다. 한국어로 먼저 확인해주세요.");
-      setTimeout(() => setNotice(null), 2400);
+  const handleSelectLanguage = async (code: string) => {
+    const nextLocale = code as Locale;
+    if (nextLocale === locale) {
+      setScreen("quiz");
       return;
     }
-    setScreen("quiz");
+
+    setSwitchingLanguage(true);
+    try {
+      const [qs, resultTypes, branding] = await Promise.all([
+        fetchQuizQuestions(nextLocale),
+        fetchResultTypes(nextLocale),
+        fetchBranding(nextLocale),
+      ]);
+      setQuestions(qs);
+      setAnswers(Array(qs.length).fill(null));
+      setResultsData(buildResultsMap(resultTypes));
+      setUi(buildUi(branding, nextLocale));
+      setLocale(nextLocale);
+      setScreen("quiz");
+    } catch (err) {
+      console.error(err);
+      setNotice("언어를 불러오지 못했습니다. 다시 시도해주세요.");
+      setTimeout(() => setNotice(null), 2400);
+    } finally {
+      setSwitchingLanguage(false);
+    }
   };
 
   const handleAnswer = (option: QuizOption) => {
@@ -147,7 +170,9 @@ export default function App() {
     <>
       <AnimatePresence mode="wait">
         <ScreenTransition key={screenKey}>
-          {screen === "cover" && <Cover ui={ui} onSelectLanguage={handleSelectLanguage} />}
+          {screen === "cover" && (
+            <Cover ui={ui} onSelectLanguage={handleSelectLanguage} disabled={switchingLanguage} />
+          )}
 
           {screen === "quiz" && (
             <QuizScreen
@@ -163,7 +188,7 @@ export default function App() {
             />
           )}
 
-          {screen === "analyzing" && <AnalyzingScreen />}
+          {screen === "analyzing" && <AnalyzingScreen ui={ui} />}
 
           {screen === "result" && resultType && (
             <ResultScreen

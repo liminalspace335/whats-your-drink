@@ -2,14 +2,23 @@ import { useState } from "react";
 import type { AdminResultType } from "../adminTypes";
 import { RESULT_TYPE_LABELS, RESULT_TYPE_TINTS } from "../adminTypes";
 import { DrinkIcon } from "../../components/DrinkIcon";
+import type { Locale } from "../../lib/db";
 import styles from "./ResultsSection.module.css";
 
 interface Props {
   resultTypes: AdminResultType[];
   onChange: (resultTypes: AdminResultType[]) => void;
+  locale: Locale;
 }
 
-export function ResultsSection({ resultTypes, onChange }: Props) {
+const LOCALE_NOTE_LABEL: Record<Locale, string> = {
+  ko: "향 노트 (쉼표로 구분)",
+  en: "향 노트 (English, 쉼표로 구분)",
+  vi: "향 노트 (Tiếng Việt, 쉼표로 구분)",
+};
+
+export function ResultsSection({ resultTypes, onChange, locale }: Props) {
+  const isKo = locale === "ko";
   const [openType, setOpenType] = useState<string | null>(resultTypes[0]?.type ?? null);
 
   const update = (type: string, patch: Partial<AdminResultType>) => {
@@ -60,7 +69,7 @@ export function ResultsSection({ resultTypes, onChange }: Props) {
                   </div>
 
                   <div className="admin-field">
-                    <label className="admin-label">향 노트 (쉼표로 구분)</label>
+                    <label className="admin-label">{LOCALE_NOTE_LABEL[locale]}</label>
                     <input
                       className={`admin-input ${styles.notesInput}`}
                       value={r.notes.join(", ")}
@@ -108,30 +117,34 @@ export function ResultsSection({ resultTypes, onChange }: Props) {
                     />
                   </div>
 
-                  <div className="admin-field">
-                    <label className="admin-label">동점 우선순위</label>
-                    <div className={styles.priorityRow}>
-                      <input
-                        className="admin-input"
-                        type="number"
-                        min={1}
-                        max={resultTypes.length}
-                        value={r.tieBreakPriority}
-                        onChange={(e) =>
-                          update(r.type, { tieBreakPriority: Number(e.target.value) })
-                        }
-                        style={{ maxWidth: "5rem" }}
-                      />
-                      <span className={styles.priorityNote}>1이 가장 먼저 선택됨</span>
+                  {isKo && (
+                    <div className="admin-field">
+                      <label className="admin-label">동점 우선순위</label>
+                      <div className={styles.priorityRow}>
+                        <input
+                          className="admin-input"
+                          type="number"
+                          min={1}
+                          max={resultTypes.length}
+                          value={r.tieBreakPriority}
+                          onChange={(e) =>
+                            update(r.type, { tieBreakPriority: Number(e.target.value) })
+                          }
+                          style={{ maxWidth: "5rem" }}
+                        />
+                        <span className={styles.priorityNote}>1이 가장 먼저 선택됨</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  <div className="admin-field">
-                    <label className="admin-label">이미지 에셋</label>
-                    <button type="button" className="admin-btn">
-                      이미지 업로드 (준비 중)
-                    </button>
-                  </div>
+                  {isKo && (
+                    <div className="admin-field">
+                      <label className="admin-label">이미지 에셋</label>
+                      <button type="button" className="admin-btn">
+                        이미지 업로드 (준비 중)
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

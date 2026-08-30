@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
+import type { Ui } from "../data/ui.ko";
 import styles from "./AnalyzingScreen.module.css";
 
-const STEPS = ["답변을 분석하는 중", "성향 타입을 매칭하는 중", "당신의 향을 찾는 중"];
 const DURATION_MS = 5000;
 
-export function AnalyzingScreen() {
+interface Props {
+  ui: Ui;
+}
+
+export function AnalyzingScreen({ ui }: Props) {
   const [activeStep, setActiveStep] = useState(0);
   const [fillStarted, setFillStarted] = useState(false);
+  const steps = ui.analyzingSteps;
 
   useEffect(() => {
-    const stepInterval = DURATION_MS / STEPS.length;
-    const timers = STEPS.map((_, i) =>
+    const stepInterval = DURATION_MS / steps.length;
+    const timers = steps.map((_, i) =>
       setTimeout(() => setActiveStep(i + 1), stepInterval * (i + 1)),
     );
     const raf = requestAnimationFrame(() => setFillStarted(true));
@@ -32,10 +37,10 @@ export function AnalyzingScreen() {
         </div>
       </div>
 
-      <p className={styles.title}>당신의 향을 찾고 있습니다</p>
+      <p className={styles.title}>{ui.analyzingTitle}</p>
 
       <div className={styles.steps}>
-        {STEPS.map((label, i) => {
+        {steps.map((label, i) => {
           const state = i < activeStep ? "done" : i === activeStep ? "active" : "";
           return (
             <div key={label} className={`${styles.step} ${state && styles[state]}`}>
