@@ -13,12 +13,6 @@ export function Cover({ onSelectLanguage }: Props) {
       </div>
 
       <div className={styles.hero}>
-        <div className={styles.badge} aria-hidden="true">
-          <svg width="19" height="19" viewBox="0 0 26 26" fill="none">
-            <circle cx="13" cy="13" r="9" stroke="#8a8c90" strokeWidth="1.3" />
-            <circle cx="13" cy="13" r="2.4" fill="#8a8c90" />
-          </svg>
-        </div>
         <p className={styles.brand}>{uiKo.brand}</p>
         <h1 className={styles.title}>{uiKo.title}</h1>
         <p className={styles.subtitle}>{uiKo.subtitle}</p>

@@ -59,6 +59,7 @@
   color: var(--ls-text-primary);
   text-align: center;
   max-width: 22rem;
+  white-space: pre-wrap;
 }
 
 .options {
@@ -125,6 +126,7 @@
   line-height: 1.35;
   text-align: left;
   color: var(--ls-text-primary);
+  white-space: pre-wrap;
 }
 
 .footer {

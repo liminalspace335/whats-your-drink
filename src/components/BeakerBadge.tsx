@@ -39,9 +39,8 @@ export function BeakerBadge({ fillLevel, total }: Props) {
 
   return (
     <div className={styles.wrap} aria-hidden="true">
-      <div className={styles.glow} />
       <div className={`${styles.badge} ${isDropping ? styles.dropping : ""}`}>
-        <svg width="34" height="34" viewBox="0 0 64 80" className={styles.svg}>
+        <svg width="44" height="44" viewBox="0 0 64 80" className={styles.svg}>
           <defs>
             <clipPath id="beakerClip">
               <path d={BEAKER_CLIP_PATH} />

@@ -6,20 +6,8 @@
   margin-bottom: 1.1rem;
 }
 
-.glow {
-  position: absolute;
-  inset: -14px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
-}
-
 .badge {
   position: relative;
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  background: var(--ls-silver-gradient);
-  box-shadow: var(--ls-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,6 +43,30 @@
 
 .dropper {
   transform-origin: 46px 4px;
+  opacity: 0;
+}
+
+.dropping .dropper {
+  animation: dropperShow 0.85s ease;
+}
+
+@keyframes dropperShow {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  78% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
 }
 
 .dropperBulb {
@@ -63,7 +75,7 @@
 }
 
 .dropping .dropperBulb {
-  animation: squeeze 0.5s ease;
+  animation: squeeze 0.5s ease 0.1s;
 }
 
 @keyframes squeeze {
@@ -149,6 +161,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .surfaceHighlight,
+  .dropping .dropper,
   .dropping .dropperBulb,
   .dropping .drop1,
   .dropping .drop2,

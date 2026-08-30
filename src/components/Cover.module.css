@@ -30,18 +30,6 @@
   gap: 1rem;
 }
 
-.badge {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: var(--ls-silver-gradient);
-  box-shadow: var(--ls-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.3rem;
-}
-
 .brand {
   font-family: var(--font-display);
   font-weight: 600;
