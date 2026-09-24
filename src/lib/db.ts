@@ -1,4 +1,7 @@
 import { supabase } from "./supabaseClient";
+
+// All tables for this app end in _dk (drink) so they never collide with other
+// services sharing the same Supabase project. Schema: supabase/dk.sql.
 import type { DrinkType, QuizQuestion, TextAlign } from "../types";
 import type { AdminQuestion, AdminResultType, AdminBranding } from "../admin/adminTypes";
 
@@ -17,7 +20,7 @@ const TRANSLATABLE_BRANDING_FIELDS = [
 async function fetchTranslationMap(locale: Locale): Promise<Record<string, string>> {
   if (locale === "ko") return {};
   const { data, error } = await supabase
-    .from("translations")
+    .from("translations_dk")
     .select("entity_type, entity_id, field_key, value")
     .eq("locale", locale);
   if (error) throw error;
@@ -37,7 +40,7 @@ export async function upsertTranslation(
   value: string,
 ) {
   const { error } = await supabase
-    .from("translations")
+    .from("translations_dk")
     .upsert(
       { entity_type: entityType, entity_id: entityId, locale, field_key: fieldKey, value },
       { onConflict: "entity_type,entity_id,locale,field_key" },
@@ -48,9 +51,9 @@ export async function upsertTranslation(
 export async function fetchQuizQuestions(locale: Locale = "ko"): Promise<QuizQuestion[]> {
   const [{ data, error }, tmap] = await Promise.all([
     supabase
-      .from("questions")
+      .from("questions_dk")
       .select(
-        "id, text, text_align, display_order, question_options(id, label, result_type, display_order)",
+        "id, text, text_align, display_order, question_options_dk(id, label, result_type, display_order)",
       )
       .order("display_order", { ascending: true }),
     fetchTranslationMap(locale),
@@ -61,7 +64,7 @@ export async function fetchQuizQuestions(locale: Locale = "ko"): Promise<QuizQue
     id: q.id,
     text: tmap[`question:${q.id}:text`] ?? q.text,
     textAlign: q.text_align as TextAlign,
-    options: [...q.question_options]
+    options: [...q.question_options_dk]
       .sort((a, b) => a.display_order - b.display_order)
       .map((o) => ({
         id: o.id,
@@ -74,9 +77,9 @@ export async function fetchQuizQuestions(locale: Locale = "ko"): Promise<QuizQue
 export async function fetchAdminQuestions(locale: Locale = "ko"): Promise<AdminQuestion[]> {
   const [{ data, error }, tmap] = await Promise.all([
     supabase
-      .from("questions")
+      .from("questions_dk")
       .select(
-        "id, code, text, text_align, display_order, question_options(id, code, label, result_type, weight, display_order)",
+        "id, code, text, text_align, display_order, question_options_dk(id, code, label, result_type, weight, display_order)",
       )
       .order("display_order", { ascending: true }),
     fetchTranslationMap(locale),
@@ -88,7 +91,7 @@ export async function fetchAdminQuestions(locale: Locale = "ko"): Promise<AdminQ
     code: q.code,
     text: tmap[`question:${q.id}:text`] ?? q.text,
     textAlign: q.text_align as TextAlign,
-    options: [...q.question_options]
+    options: [...q.question_options_dk]
       .sort((a, b) => a.display_order - b.display_order)
       .map((o) => ({
         id: o.id,
@@ -102,7 +105,7 @@ export async function fetchAdminQuestions(locale: Locale = "ko"): Promise<AdminQ
 
 export async function fetchResultTypes(locale: Locale = "ko"): Promise<AdminResultType[]> {
   const [{ data, error }, tmap] = await Promise.all([
-    supabase.from("result_types").select("*").order("tie_break_priority", { ascending: true }),
+    supabase.from("result_types_dk").select("*").order("tie_break_priority", { ascending: true }),
     fetchTranslationMap(locale),
   ]);
   if (error) throw error;
@@ -127,7 +130,7 @@ export async function fetchResultTypes(locale: Locale = "ko"): Promise<AdminResu
 
 export async function fetchBranding(locale: Locale = "ko"): Promise<AdminBranding> {
   const [{ data, error }, tmap] = await Promise.all([
-    supabase.from("branding").select("*").eq("id", 1).single(),
+    supabase.from("branding_dk").select("*").eq("id", 1).single(),
     fetchTranslationMap(locale),
   ]);
   if (error) throw error;
@@ -152,7 +155,7 @@ export async function updateQuestion(
   id: string,
   patch: Partial<{ text: string; text_align: TextAlign }>,
 ) {
-  const { error } = await supabase.from("questions").update(patch).eq("id", id);
+  const { error } = await supabase.from("questions_dk").update(patch).eq("id", id);
   if (error) throw error;
 }
 
@@ -160,17 +163,17 @@ export async function updateOption(
   id: string,
   patch: Partial<{ label: string; result_type: DrinkType; weight: number }>,
 ) {
-  const { error } = await supabase.from("question_options").update(patch).eq("id", id);
+  const { error } = await supabase.from("question_options_dk").update(patch).eq("id", id);
   if (error) throw error;
 }
 
 export async function updateResultType(type: DrinkType, patch: Record<string, unknown>) {
-  const { error } = await supabase.from("result_types").update(patch).eq("type", type);
+  const { error } = await supabase.from("result_types_dk").update(patch).eq("type", type);
   if (error) throw error;
 }
 
 export async function updateBranding(patch: Record<string, unknown>) {
-  const { error } = await supabase.from("branding").update(patch).eq("id", 1);
+  const { error } = await supabase.from("branding_dk").update(patch).eq("id", 1);
   if (error) throw error;
 }
 
@@ -179,7 +182,7 @@ export async function insertSubmission(
   resultType: DrinkType,
 ): Promise<string> {
   const { data, error } = await supabase
-    .from("submissions")
+    .from("submissions_dk")
     .insert({ answers, result_type: resultType })
     .select("id")
     .single();
@@ -189,7 +192,7 @@ export async function insertSubmission(
 
 export async function markSubmissionShared(id: string) {
   const { error } = await supabase
-    .from("submissions")
+    .from("submissions_dk")
     .update({ shared: true, shared_at: new Date().toISOString() })
     .eq("id", id);
   if (error) throw error;
@@ -197,7 +200,7 @@ export async function markSubmissionShared(id: string) {
 
 export async function insertReferralVisit(submissionId: string) {
   const { error } = await supabase
-    .from("referral_visits")
+    .from("referral_visits_dk")
     .insert({ submission_id: submissionId, user_agent: navigator.userAgent });
   if (error) throw error;
 }
@@ -213,14 +216,14 @@ export interface SubmissionReportRow {
 
 export async function fetchSubmissionReport(): Promise<SubmissionReportRow[]> {
   const { data: submissions, error } = await supabase
-    .from("submissions")
+    .from("submissions_dk")
     .select("id, created_at, result_type, shared, shared_at")
     .order("created_at", { ascending: false })
     .limit(200);
   if (error) throw error;
 
   const { data: referrals, error: refError } = await supabase
-    .from("referral_visits")
+    .from("referral_visits_dk")
     .select("submission_id");
   if (refError) throw refError;
 
